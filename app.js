@@ -205,9 +205,11 @@ const JOB_BOARDS = [
   { name:"AcademicJobsOnline",emoji:"🎓",url:"https://academicjobsonline.org/ajo/jobs" },
   { name:"EURAXESS",         emoji:"🇪🇺", url:"https://euraxess.ec.europa.eu/jobs" },
   { name:"jobs.ac.uk",       emoji:"🇬🇧", url:"https://www.jobs.ac.uk/search/?keywords=postdoc+chemistry+biology" },
-  { name:"LinkedIn",         emoji:"💼", url:"https://www.linkedin.com/jobs/search/?keywords=postdoc+chemistry+biology" },
-  { name:"ResearchGate",     emoji:"📚", url:"https://www.researchgate.net/jobs/search?q=postdoc" },
-  { name:"Indeed",           emoji:"🔍", url:"https://www.indeed.com/jobs?q=postdoc+chemistry+biology" },
+  { name:"LinkedIn",         emoji:"💼", url:"https://www.linkedin.com/jobs/search/?keywords=postdoc+chemistry+biology&f_TPR=r604800" },
+  { name:"Twitter / X",     emoji:"🐦", url:"https://x.com/search?q=%23PostdocPosition+OR+%23AcademicJobs+OR+%22postdoc+position%22&f=live&src=typed_query" },
+  { name:"Bluesky",         emoji:"🦋", url:"https://bsky.app/search?q=postdoc+chemistry+biology" },
+  { name:"ResearchGate",    emoji:"📚", url:"https://www.researchgate.net/jobs/search?q=postdoc" },
+  { name:"Indeed",          emoji:"🔍", url:"https://www.indeed.com/jobs?q=postdoc+chemistry+biology" },
 ];
 
 /* ---- RSS sources for job ads ---- */
