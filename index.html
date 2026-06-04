@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>博士后申请追踪 · Chemical Biology</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <div id="app">
+
+    <!-- ===== Header ===== -->
+    <header class="header">
+      <div class="container">
+        <div class="header-inner">
+          <div class="brand">
+            <div class="brand-icon">⚗️</div>
+            <div class="brand-text">
+              <h1>博士后申请追踪</h1>
+              <p>Chemical Biology · Postdoc Applications</p>
+            </div>
+          </div>
+          <div class="header-actions">
+            <button class="btn btn-ghost" id="exportBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              导出 CSV
+            </button>
+            <button class="btn btn-primary" id="addBtn">
+              <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              添加申请
+            </button>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- ===== Stats ===== -->
+    <section class="stats-section">
+      <div class="container">
+        <div class="stats-grid" id="statsGrid"></div>
+      </div>
+    </section>
+
+    <!-- ===== Toolbar ===== -->
+    <section class="toolbar-section">
+      <div class="container">
+        <div class="toolbar">
+          <div class="search-wrapper">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+            <input type="text" id="searchInput" placeholder="搜索导师或学校..." class="search-input">
+          </div>
+          <div class="filter-tabs" id="filterTabs"></div>
+          <select class="sort-select" id="sortSelect">
+            <option value="date-desc">申请时间 · 最新优先</option>
+            <option value="date-asc">申请时间 · 最早优先</option>
+            <option value="wait-desc">等待天数 · 最长优先</option>
+            <option value="university">学校名称 A→Z</option>
+            <option value="hindex-desc">H 指数 · 最高优先</option>
+            <option value="papers-desc">一区论文 · 最多优先</option>
+          </select>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===== Main Table ===== -->
+    <main class="main">
+      <div class="container">
+        <div class="table-wrapper" id="tableWrapper">
+          <table class="app-table" id="appTable">
+            <thead>
+              <tr>
+                <th>导师 / 学校</th>
+                <th>相关链接</th>
+                <th>H 指数</th>
+                <th>近5年一区论文</th>
+                <th>申请日期</th>
+                <th>等待天数</th>
+                <th>状态</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+          <div class="empty-state" id="emptyState">
+            <div class="empty-icon">🔬</div>
+            <p class="empty-title">暂无申请记录</p>
+            <p class="empty-sub">点击右上角「添加申请」开始记录你的博士后申请之旅</p>
+            <button class="btn btn-primary" id="emptyAddBtn">添加第一条申请</button>
+          </div>
+        </div>
+      </div>
+    </main>
+
+  </div><!-- /#app -->
+
+  <!-- ===== Add / Edit Modal ===== -->
+  <div class="overlay" id="overlay">
+    <div class="modal" id="modal">
+      <div class="modal-header">
+        <h2 id="modalTitle">添加申请</h2>
+        <button class="modal-close" id="modalClose" aria-label="关闭">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+        </button>
+      </div>
+
+      <form id="appForm" class="modal-form" novalidate>
+        <input type="hidden" id="editId">
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="piName">导师姓名 <span class="req">*</span></label>
+            <input type="text" id="piName" placeholder="e.g. Benjamin F. Cravatt" autocomplete="off">
+          </div>
+          <div class="form-group">
+            <label for="university">学校 <span class="req">*</span></label>
+            <input type="text" id="university" placeholder="e.g. The Scripps Research Institute" autocomplete="off">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="department">院系</label>
+            <input type="text" id="department" placeholder="e.g. Department of Chemistry">
+          </div>
+          <div class="form-group">
+            <label for="researchArea">研究方向</label>
+            <input type="text" id="researchArea" placeholder="e.g. Chemical Proteomics">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="labWebsite">课题组主页</label>
+            <input type="url" id="labWebsite" placeholder="https://lab.university.edu">
+          </div>
+          <div class="form-group">
+            <label for="scholarUrl">Google Scholar 链接</label>
+            <input type="url" id="scholarUrl" placeholder="https://scholar.google.com/citations?user=...">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="hIndex">H 指数（Google Scholar）</label>
+            <input type="number" id="hIndex" placeholder="e.g. 85" min="0" max="999">
+          </div>
+          <div class="form-group">
+            <label for="topPapers">
+              近5年一区论文数
+              <span class="form-hint">（Nature/Science/Cell 正刊及子刊）</span>
+            </label>
+            <input type="number" id="topPapers" placeholder="e.g. 12" min="0" max="999">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="contactEmail">联系邮箱</label>
+            <input type="email" id="contactEmail" placeholder="pi@university.edu">
+          </div>
+          <div class="form-group">
+            <label for="applicationDate">申请日期 <span class="req">*</span></label>
+            <input type="date" id="applicationDate">
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="status">当前状态 <span class="req">*</span></label>
+            <select id="status">
+              <option value="contacted">已联系</option>
+              <option value="applied">已网申</option>
+              <option value="interviewing">面试中</option>
+              <option value="no_response">未回复</option>
+              <option value="rejected">已拒绝</option>
+              <option value="accepted">已录取 🎉</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label for="notes">备注</label>
+            <input type="text" id="notes" placeholder="其他说明、进展记录...">
+          </div>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-ghost" id="cancelBtn">取消</button>
+          <button type="submit" class="btn btn-primary" id="saveBtn">保存</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===== Delete Confirm Modal ===== -->
+  <div class="overlay" id="deleteOverlay">
+    <div class="modal modal-sm">
+      <div class="modal-header">
+        <h2>确认删除</h2>
+      </div>
+      <p class="delete-msg" id="deleteMsg">确定要删除这条申请记录吗？</p>
+      <div class="modal-footer modal-footer-pad">
+        <button class="btn btn-ghost" id="deleteCancelBtn">取消</button>
+        <button class="btn btn-danger" id="deleteConfirmBtn">删除</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== Toast ===== -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <script src="app.js"></script>
+</body>
+</html>
